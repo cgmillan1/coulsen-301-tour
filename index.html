@@ -405,6 +405,9 @@ var SLOTS = [
   '2:15 PM', '2:30 PM', '2:45 PM', '3:00 PM', '3:15 PM'
 ];
 
+/* open house date, used to close slots once their time has passed */
+var EVENT_Y = 2026, EVENT_M = 9, EVENT_D = 5;
+
 var selected = null;
 var slotsEl  = document.getElementById('slots');
 var slotMsg  = document.getElementById('slotStatus');
@@ -416,37 +419,81 @@ function configured() {
   return API_URL.indexOf('http') === 0;
 }
 
-/* ---- render slots immediately, availability arrives after ---- */
+/* ------------------------------------------------------------------
+   state[time] = { taken: bool, past: bool, available: bool }
+   A slot is selectable only when available is true. The server decides
+   this; the local check below is only a fallback when the server cannot
+   be reached.
+------------------------------------------------------------------ */
 
-function renderSlots(taken) {
+var state = {};
+
+function localIsPast(time) {
+  var m = time.match(/^(\d{1,2}):(\d{2})\s*([AP])/);
+  if (!m) return false;
+  var h = parseInt(m[1], 10) % 12;
+  if (m[3] === 'P') h += 12;
+  var when = new Date(EVENT_Y, EVENT_M - 1, EVENT_D, h, parseInt(m[2], 10), 0, 0);
+  return when.getTime() < Date.now();
+}
+
+function blankState() {
+  var s = {};
+  SLOTS.forEach(function (time) {
+    var past = localIsPast(time);
+    s[time] = { taken: false, past: past, available: !past };
+  });
+  return s;
+}
+
+function isSelectable(time) {
+  return !!(state[time] && state[time].available);
+}
+
+function renderSlots() {
   slotsEl.innerHTML = '';
 
   SLOTS.forEach(function (time) {
-    var isTaken = !!(taken && taken[time]);
+    var st = state[time] || { taken: false, past: false, available: true };
+    var open = st.available === true;
+
+    var label = 'Available';
+    var aria = time + ', available';
+    if (st.taken) { label = 'Booked'; aria = time + ', already booked'; }
+    else if (st.past) { label = 'Passed'; aria = time + ', this time has already passed'; }
+
     var b = document.createElement('button');
     b.type = 'button';
     b.className = 'slot';
-    b.setAttribute('aria-pressed', 'false');
-    b.disabled = isTaken;
+    b.disabled = !open;
+    b.setAttribute('aria-pressed', String(open && selected === time));
+    b.setAttribute('aria-label', aria);
     b.innerHTML = '<span class="t">' + time + '</span>' +
-                  '<span class="s">' + (isTaken ? 'Booked' : 'Available') + '</span>';
-    if (isTaken) b.setAttribute('aria-label', time + ', already booked');
+                  '<span class="s">' + label + '</span>';
 
-    if (!isTaken) {
-      if (selected === time) b.setAttribute('aria-pressed', 'true');
+    /* the listener is only attached to selectable slots, so a booked or
+       passed slot cannot be chosen even if the disabled attribute is
+       removed by hand in the browser */
+    if (open) {
       b.addEventListener('click', function () { choose(time, b); });
     }
+
     slotsEl.appendChild(b);
   });
 
-  if (selected && taken && taken[selected]) {
+  /* if the slot the visitor had chosen is no longer selectable, drop it */
+  if (selected && !isSelectable(selected)) {
+    var lost = selected;
     selected = null;
     formMsg.className = 'status err';
-    formMsg.textContent = 'That time was just taken. Please pick another one.';
+    formMsg.textContent = state[lost] && state[lost].past
+      ? 'That time has already passed. Please pick another one.'
+      : 'Someone just booked that time. Please pick another one.';
   }
 }
 
 function choose(time, btn) {
+  if (!isSelectable(time)) return;   // second guard
   selected = time;
   Array.prototype.forEach.call(slotsEl.children, function (el) {
     el.setAttribute('aria-pressed', 'false');
@@ -458,28 +505,47 @@ function choose(time, btn) {
 
 function loadAvailability() {
   if (!configured()) {
+    state = blankState();
+    renderSlots();
+    slotMsg.className = 'status info';
     slotMsg.textContent = 'All times shown. Pick one below.';
-    return;
+    return Promise.resolve(false);
   }
 
-  fetch(API_URL, { method: 'GET' })
+  return fetch(API_URL, { method: 'GET' })
     .then(function (r) { return r.json(); })
     .then(function (data) {
-      if (!data || !data.ok) throw new Error('bad');
-      var taken = {};
+      if (!data || !data.ok || !data.slots) throw new Error('bad');
+
+      var next = {};
       var open = 0;
       data.slots.forEach(function (s) {
-        if (s.taken) { taken[s.time] = true; } else { open++; }
+        var taken = !!s.taken;
+        var past = !!s.past;
+        /* trust the server, but never show a slot as open if our own
+           clock says it has passed */
+        var available = (s.available === undefined)
+          ? (!taken && !past)
+          : (s.available === true);
+        if (available && localIsPast(s.time)) { available = false; past = true; }
+        next[s.time] = { taken: taken, past: past, available: available };
+        if (available) open++;
       });
-      renderSlots(taken);
+      state = next;
+      renderSlots();
+
       slotMsg.className = 'status info';
       slotMsg.textContent = open === 0
-        ? 'All times are booked. Email us and we will add another showing.'
+        ? 'No times are open right now. Email us and we will set up a private showing.'
         : open + (open === 1 ? ' time is' : ' times are') + ' still open.';
+      return true;
     })
     .catch(function () {
+      state = blankState();
+      renderSlots();
       slotMsg.className = 'status info';
       slotMsg.textContent = 'Pick a time below and we will confirm it by email.';
+      return false;
     });
 }
 
@@ -497,6 +563,12 @@ form.addEventListener('submit', function (ev) {
   formMsg.className = 'status err';
 
   if (!selected) { formMsg.textContent = 'Please pick a time first.'; return; }
+  if (!isSelectable(selected)) {
+    formMsg.textContent = 'That time is no longer available. Please pick another one.';
+    selected = null;
+    renderSlots();
+    return;
+  }
   if (!first || !last) { formMsg.textContent = 'Please enter your first and last name.'; return; }
   if (phone.replace(/\D/g, '').length < 10) { formMsg.textContent = 'Please enter a 10 digit phone number.'; return; }
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { formMsg.textContent = 'Please enter a valid email address.'; return; }
@@ -537,7 +609,12 @@ form.addEventListener('submit', function (ev) {
       formMsg.className = 'status err';
 
       if (data && data.error === 'taken') {
+        selected = null;
         formMsg.textContent = 'Someone just took that time. Pick another one below.';
+        loadAvailability();
+      } else if (data && data.error === 'past') {
+        selected = null;
+        formMsg.textContent = 'That time has already passed. Pick another one below.';
         loadAvailability();
       } else if (data && data.error === 'busy') {
         formMsg.textContent = 'The system is busy for a second. Please tap Reserve again.';
@@ -569,7 +646,8 @@ document.addEventListener('visibilitychange', function () {
 
 window.addEventListener('focus', refreshQuietly);
 
-renderSlots(null);
+state = blankState();
+renderSlots();
 loadAvailability();
 </script>
 
