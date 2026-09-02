@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book a Showing | 881 N Coulsen Dr #301</title>
+<meta name="description" content="Reserve a 15 minute showing time for 881 N Coulsen Dr Apt 301, Saratoga Springs. Saturday September 5, 1:00 to 3:00 PM.">
+
+<meta property="og:title" content="Book a Showing: 881 N Coulsen Dr #301">
+<meta property="og:description" content="Saturday, September 5, 1:00 to 3:00 PM. Pick a 15 minute time slot. 3 bed, 2 bath, $2,200 a month with Wi-Fi and HOA included.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --navy: #0E1B2E;
+    --navy-soft: #1B2C44;
+    --brass: #C29A5B;
+    --brass-deep: #9C7539;
+    --cream: #F5EFE4;
+    --ground: #FBF8F2;
+    --surface: #FFFFFF;
+    --ink: #14202F;
+    --muted: #6D7783;
+    --rule: rgba(14, 27, 46, 0.15);
+    --rule-soft: rgba(14, 27, 46, 0.08);
+    --band-ink: #F5EFE4;
+    --band-muted: #A9B4C2;
+    --band-ground: #0E1B2E;
+    --band-rule: rgba(194, 154, 91, 0.32);
+    --positive: #2E6F52;
+    --positive-soft: rgba(46, 111, 82, 0.1);
+    --negative: #A6412F;
+    --disabled: rgba(14, 27, 46, 0.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0B1524;
+      --surface: #13223A;
+      --cream: #EDE5D6;
+      --ink: #EDE5D6;
+      --muted: #98A5B5;
+      --rule: rgba(194, 154, 91, 0.26);
+      --rule-soft: rgba(237, 229, 214, 0.1);
+      --brass: #D2AC72;
+      --brass-deep: #C29A5B;
+      --band-ground: #060D18;
+      --positive: #6FBE93;
+      --positive-soft: rgba(111, 190, 147, 0.12);
+      --negative: #E8917C;
+      --disabled: rgba(237, 229, 214, 0.05);
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet { max-width: 640px; margin: 0 auto; padding: 0 0 64px; }
+
+  /* ---------- Header ---------- */
+
+  .band { background: var(--band-ground); color: var(--band-ink); padding: 40px 32px 34px; }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin: 0 0 14px;
+  }
+
+  .band h1 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(30px, 7vw, 42px);
+    line-height: 1.1;
+    text-wrap: balance;
+    margin: 0 0 10px;
+  }
+
+  .band .when {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--brass);
+    margin: 0 0 6px;
+  }
+
+  .band .where { color: var(--band-muted); font-size: 14.5px; margin: 0; }
+
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--band-rule);
+    font-size: 13.5px;
+    color: var(--band-muted);
+  }
+
+  .facts strong { color: var(--band-ink); font-weight: 600; }
+
+  /* ---------- Sections ---------- */
+
+  section { padding: 0 32px; }
+
+  h2 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 36px 0 6px;
+  }
+
+  .hint { color: var(--muted); font-size: 14.5px; margin: 0 0 16px; max-width: 46ch; }
+
+  /* ---------- Slots ---------- */
+
+  .slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  .slot {
+    appearance: none;
+    font-family: inherit;
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    padding: 13px 15px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transition: border-color 120ms ease, background 120ms ease;
+  }
+
+  .slot .t { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .slot .s {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .slot:hover:not(:disabled) { border-color: var(--brass); }
+
+  .slot[aria-pressed="true"] {
+    background: var(--brass);
+    border-color: var(--brass);
+    color: #14202F;
+  }
+
+  .slot[aria-pressed="true"] .s { color: #14202F; }
+
+  .slot:disabled {
+    background: var(--disabled);
+    border-color: var(--rule-soft);
+    color: var(--muted);
+    cursor: not-allowed;
+    opacity: 0.62;
+    filter: grayscale(1);
+  }
+
+  .slot:disabled .t {
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    font-weight: 500;
+  }
+
+  .slot:disabled .s { color: var(--muted); }
+
+  .slot:focus-visible { outline: 2px solid var(--brass-deep); outline-offset: 2px; }
+
+  /* ---------- Form ---------- */
+
+  form { margin-top: 26px; display: flex; flex-direction: column; gap: 16px; }
+
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+
+  label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  input, select {
+    font-family: inherit;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 11px 13px;
+    width: 100%;
+  }
+
+  input:focus, select:focus { outline: 2px solid var(--brass-deep); outline-offset: -1px; }
+
+  .btn {
+    appearance: none;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    background: var(--navy);
+    color: var(--cream);
+    border: 1px solid var(--navy);
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: opacity 120ms ease;
+  }
+
+  .btn:hover:not(:disabled) { opacity: 0.9; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+  .status { font-size: 14px; margin: 0; min-height: 1.2em; }
+  .slots + .status { margin-top: 14px; }
+  .status.err { color: var(--negative); font-weight: 500; }
+  .status.info { color: var(--muted); }
+
+  /* ---------- Confirmation ---------- */
+
+  .done {
+    border-left: 3px solid var(--positive);
+    background: var(--positive-soft);
+    padding: 22px 24px;
+    margin-top: 8px;
+  }
+
+  .done h2 { margin-top: 0; color: var(--positive); }
+
+  .done .slot-big {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1.1;
+    margin: 4px 0 12px;
+  }
+
+  .done p { font-size: 15px; margin: 0 0 10px; }
+  .done p:last-child { margin-bottom: 0; }
+
+  /* ---------- Details ---------- */
+
+  .details { margin-top: 8px; border-top: 1px solid var(--rule); }
+
+  .detail {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-size: 14.5px;
+  }
+
+  .detail .k { color: var(--muted); }
+  .detail .v { font-weight: 600; text-align: right; }
+
+  footer {
+    margin: 40px 32px 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  footer a { color: var(--brass-deep); }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 480px) {
+    .band { padding: 32px 20px 28px; }
+    section { padding: 0 20px; }
+    footer { margin-left: 20px; margin-right: 20px; }
+    .pair { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <div class="band">
+    <p class="eyebrow">Open house &middot; By appointment</p>
+    <h1>881 N Coulsen Dr, Apt 301</h1>
+    <p class="when">Saturday, September 5 &middot; 1:00 to 3:00 PM</p>
+    <p class="where">Saratoga Springs, UT 84045 &middot; Highridge at Mt. Saratoga</p>
+    <div class="facts">
+      <span><strong>3 bed, 2 bath</strong></span>
+      <span><strong>1,272 sq ft</strong>, top floor</span>
+      <span><strong>$2,200/mo</strong> with Wi-Fi and HOA</span>
+    </div>
+  </div>
+
+  <div id="booking">
+    <section>
+      <h2>Pick a time</h2>
+      <p class="hint">Showings run 10 minutes each, one group at a time, so you get the place to yourself. Times that are already booked show up greyed out.</p>
+
+      <div class="slots" id="slots" role="group" aria-label="Available showing times"></div>
+      <p class="status info" id="slotStatus">Checking which times are still open…</p>
+    </section>
+
+    <section>
+      <form id="form" novalidate>
+        <div class="pair">
+          <div class="field">
+            <label for="first">First name</label>
+            <input id="first" name="first" type="text" autocomplete="given-name" required>
+          </div>
+          <div class="field">
+            <label for="last">Last name</label>
+            <input id="last" name="last" type="text" autocomplete="family-name" required>
+          </div>
+        </div>
+
+        <div class="pair">
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="801-555-0134" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="party">How many people are coming</label>
+          <select id="party" name="party">
+            <option value="1">Just me</option>
+            <option value="2" selected>2 people</option>
+            <option value="3">3 people</option>
+            <option value="4">4 people</option>
+            <option value="5+">5 or more</option>
+          </select>
+        </div>
+
+        <button class="btn" id="submit" type="submit">Reserve my time</button>
+        <p class="status" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </div>
+
+  <section id="confirmed" hidden>
+    <div class="done">
+      <h2>You are booked</h2>
+      <p class="slot-big" id="doneSlot"></p>
+      <p>A confirmation is on its way to <strong id="doneEmail"></strong>. If you do not see it in a few minutes, check your spam folder.</p>
+      <p>Please arrive a couple of minutes early. Applications are available on site, $15 per adult.</p>
+    </div>
+
+    <div class="details">
+      <div class="detail"><span class="k">Address</span><span class="v">881 N Coulsen Dr, Apt 301<br>Saratoga Springs, UT 84045</span></div>
+      <div class="detail"><span class="k">Date</span><span class="v">Saturday, September 5, 2026</span></div>
+      <div class="detail"><span class="k">Rent</span><span class="v">$2,200 per month</span></div>
+      <div class="detail"><span class="k">Included</span><span class="v">Wi-Fi and HOA dues</span></div>
+      <div class="detail"><span class="k">Questions</span><span class="v"><a href="mailto:karolcintra.m@gmail.com">karolcintra.m@gmail.com</a></span></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Can't make Saturday? Email <a href="mailto:karolcintra.m@gmail.com">karolcintra.m@gmail.com</a> and we'll set up a private showing during the week.</p>
+  </footer>
+
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   PASTE YOUR APPS SCRIPT WEB APP URL HERE (the one ending in /exec)
+------------------------------------------------------------------ */
+var API_URL = 'https://script.google.com/macros/s/AKfycbxA_IVJQ59Y2yxYbipYnn7Uh69T-I_Q36Co-EHZCk9sm_nB_csc6FYV16vt_PhlBj89/exec';
+
+var SLOTS = [
+  '1:00 PM', '1:10 PM', '1:20 PM', '1:30 PM', '1:40 PM', '1:50 PM',
+  '2:00 PM', '2:10 PM', '2:20 PM', '2:30 PM', '2:40 PM', '2:50 PM'
+];
+
+var selected = null;
+var slotsEl  = document.getElementById('slots');
+var slotMsg  = document.getElementById('slotStatus');
+var form     = document.getElementById('form');
+var formMsg  = document.getElementById('formStatus');
+var submit   = document.getElementById('submit');
+
+function configured() {
+  return API_URL.indexOf('http') === 0;
+}
+
+/* ---- render slots immediately, availability arrives after ---- */
+
+function renderSlots(taken) {
+  slotsEl.innerHTML = '';
+
+  SLOTS.forEach(function (time) {
+    var isTaken = !!(taken && taken[time]);
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'slot';
+    b.setAttribute('aria-pressed', 'false');
+    b.disabled = isTaken;
+    b.innerHTML = '<span class="t">' + time + '</span>' +
+                  '<span class="s">' + (isTaken ? 'Booked' : 'Available') + '</span>';
+    if (isTaken) b.setAttribute('aria-label', time + ', already booked');
+
+    if (!isTaken) {
+      if (selected === time) b.setAttribute('aria-pressed', 'true');
+      b.addEventListener('click', function () { choose(time, b); });
+    }
+    slotsEl.appendChild(b);
+  });
+
+  if (selected && taken && taken[selected]) {
+    selected = null;
+    formMsg.className = 'status err';
+    formMsg.textContent = 'That time was just taken. Please pick another one.';
+  }
+}
+
+function choose(time, btn) {
+  selected = time;
+  Array.prototype.forEach.call(slotsEl.children, function (el) {
+    el.setAttribute('aria-pressed', 'false');
+  });
+  btn.setAttribute('aria-pressed', 'true');
+  formMsg.textContent = '';
+  formMsg.className = 'status';
+}
+
+function loadAvailability() {
+  if (!configured()) {
+    slotMsg.textContent = 'All times shown. Pick one below.';
+    return;
+  }
+
+  fetch(API_URL, { method: 'GET' })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (!data || !data.ok) throw new Error('bad');
+      var taken = {};
+      var open = 0;
+      data.slots.forEach(function (s) {
+        if (s.taken) { taken[s.time] = true; } else { open++; }
+      });
+      renderSlots(taken);
+      slotMsg.className = 'status info';
+      slotMsg.textContent = open === 0
+        ? 'All times are booked. Email us and we will add another showing.'
+        : open + (open === 1 ? ' time is' : ' times are') + ' still open.';
+    })
+    .catch(function () {
+      slotMsg.className = 'status info';
+      slotMsg.textContent = 'Pick a time below and we will confirm it by email.';
+    });
+}
+
+/* ---- submit ---- */
+
+form.addEventListener('submit', function (ev) {
+  ev.preventDefault();
+
+  var first = document.getElementById('first').value.trim();
+  var last  = document.getElementById('last').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var party = document.getElementById('party').value;
+
+  formMsg.className = 'status err';
+
+  if (!selected) { formMsg.textContent = 'Please pick a time first.'; return; }
+  if (!first || !last) { formMsg.textContent = 'Please enter your first and last name.'; return; }
+  if (phone.replace(/\D/g, '').length < 10) { formMsg.textContent = 'Please enter a 10 digit phone number.'; return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { formMsg.textContent = 'Please enter a valid email address.'; return; }
+
+  if (!configured()) {
+    formMsg.textContent = 'Booking is not connected yet. Please email karolcintra.m@gmail.com.';
+    return;
+  }
+
+  submit.disabled = true;
+  submit.textContent = 'Reserving…';
+  formMsg.className = 'status info';
+  formMsg.textContent = 'Holding your time…';
+
+  fetch(API_URL, {
+    method: 'POST',
+    /* text/plain keeps this a simple request, so no CORS preflight */
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      slot: selected, first: first, last: last,
+      phone: phone, email: email, party: party
+    })
+  })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data && data.ok) {
+        document.getElementById('doneSlot').textContent =
+          'Saturday, September 5 at ' + data.slot;
+        document.getElementById('doneEmail').textContent = email;
+        document.getElementById('booking').hidden = true;
+        document.getElementById('confirmed').hidden = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      submit.disabled = false;
+      submit.textContent = 'Reserve my time';
+      formMsg.className = 'status err';
+
+      if (data && data.error === 'taken') {
+        formMsg.textContent = 'Someone just took that time. Pick another one below.';
+        loadAvailability();
+      } else if (data && data.error === 'busy') {
+        formMsg.textContent = 'The system is busy for a second. Please tap Reserve again.';
+      } else {
+        formMsg.textContent = 'Something went wrong. Please email karolcintra.m@gmail.com.';
+      }
+    })
+    .catch(function () {
+      submit.disabled = false;
+      submit.textContent = 'Reserve my time';
+      formMsg.className = 'status err';
+      formMsg.textContent = 'We could not reach the booking system. Please email karolcintra.m@gmail.com.';
+    });
+});
+
+/* ---- keep the list fresh while the page sits open ---- */
+
+function refreshQuietly() {
+  if (document.hidden) return;
+  if (document.getElementById('confirmed').hidden === false) return;
+  loadAvailability();
+}
+
+setInterval(refreshQuietly, 30000);
+
+document.addEventListener('visibilitychange', function () {
+  if (!document.hidden) refreshQuietly();
+});
+
+window.addEventListener('focus', refreshQuietly);
+
+renderSlots(null);
+loadAvailability();
+</script>
+
+</body>
+</html>
